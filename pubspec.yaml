@@ -1,0 +1,26 @@
+name: flutter_ip_issue
+description: "A new Flutter project."
+publish_to: 'none'
+version: 0.1.0
+
+environment:
+  sdk: '>=3.3.3 <4.0.0'
+
+dependencies:
+  http: ^1.2.1
+  
+  #http_client -> Flutter wrapper around native android and iOS http client
+  http_client:
+    path: packages/http_client
+    
+  
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: true

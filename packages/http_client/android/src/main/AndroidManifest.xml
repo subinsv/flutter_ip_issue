@@ -1,0 +1,3 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+  package="io.ezto.http.client.http_client">
+</manifest>
