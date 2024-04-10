@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_client/http_client.dart';
@@ -15,9 +18,11 @@ class MainApp extends StatefulWidget {
 
 class _MainAppState extends State<MainApp> {
   final nativeClient = HttpNativeClient();
+  final dartIoHttpClient = HttpClient();
 
   final uri = Uri.parse("https://api.ipify.org");
   String flutterIp = "Click Get IP Button";
+  String flutterDartIoIp = "Click Get IP Button";
   String nativeIp = "Click Get IP Button";
 
   @override
@@ -28,12 +33,22 @@ class _MainAppState extends State<MainApp> {
           onPressed: () async {
             try {
               flutterIp = "Loading";
+              flutterDartIoIp = "Loading";
               nativeIp = "Loading";
               setState(() {});
+
+              //http package response
               final flutterIpResponse = await http.get(uri);
               flutterIp = flutterIpResponse.body;
               setState(() {});
 
+              //dart.io:HttpClient response
+              final request = await dartIoHttpClient.getUrl(uri);
+              final response = await request.close();
+              flutterDartIoIp = await response.transform(utf8.decoder).join();
+              setState(() {});
+
+              //native wrapper response
               final nativeIpResposne =
                   await nativeClient.getUrl("https://api.ipify.org");
               nativeIp = nativeIpResposne.body;
@@ -41,6 +56,7 @@ class _MainAppState extends State<MainApp> {
             } catch (e) {
               flutterIp = e.toString();
               nativeIp = e.toString();
+              flutterDartIoIp = e.toString();
               setState(() {});
             }
           },
@@ -52,10 +68,51 @@ class _MainAppState extends State<MainApp> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text("Flutter Http Client"),
-                Text(flutterIp),
-                const Text("Android/iOS Native Http Client"),
-                Text(nativeIp),
+                ListTile(
+                  title: const Text(
+                    "Flutter Http Client [package:http]",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  subtitle: Text(
+                    flutterIp,
+                    style: const TextStyle(
+                      color: Colors.red,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                ListTile(
+                  title: const Text(
+                    "Flutter Http Client [dart.io:HttpClient]",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  subtitle: Text(
+                    flutterDartIoIp,
+                    style: const TextStyle(
+                      color: Colors.red,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                ListTile(
+                  title: const Text(
+                    "Android/iOS Native Http Client",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  subtitle: Text(
+                    nativeIp,
+                    style: const TextStyle(
+                      color: Colors.green,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
                 const Spacer(),
               ],
             ),
